@@ -1,0 +1,259 @@
+import { useCallback, useEffect, useState } from 'react';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Box, Stack, Typography, Button, useTheme } from '@mui/material';
+import { t } from 'i18next';
+import { useDropzone } from 'react-dropzone';
+import { useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
+import { useNavigate, useParams } from 'react-router';
+
+import { FormProvider, RHFOutlinedInput, SVGIcon } from '@src/components';
+import { CreateMovieFields, PATH_MAIN } from '@src/constants';
+import { useAppDispatch } from '@src/store';
+import { updateMovie, createMovie } from '@src/store/actions/movie';
+
+import { useMovie } from './hooks/useMovie';
+import { MovieSchema } from './schemas/movieSchema';
+
+export interface ICreateMovieValues {
+  [CreateMovieFields.NAME]: string;
+  [CreateMovieFields.DESCRIPTION]: string;
+  [CreateMovieFields.IMAGE_URL]: string | File;
+}
+
+const defaultValues: ICreateMovieValues = {
+  [CreateMovieFields.NAME]: '',
+  [CreateMovieFields.DESCRIPTION]: '',
+  [CreateMovieFields.IMAGE_URL]: '',
+};
+
+const MoviePage = () => {
+  const theme = useTheme();
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+
+  const methods = useForm<ICreateMovieValues>({
+    resolver: yupResolver(MovieSchema() as any),
+    defaultValues,
+    mode: 'onTouched',
+  });
+
+  const {
+    handleSubmit,
+    reset,
+    watch,
+    formState: { isSubmitting, isValid },
+  } = methods;
+
+  const { movie } = useMovie(id || null);
+
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (movie) {
+      reset({
+        [CreateMovieFields.NAME]: movie.name || '',
+        [CreateMovieFields.DESCRIPTION]: movie.description || '',
+        [CreateMovieFields.IMAGE_URL]: movie.imageUrl || '',
+      });
+      setImageUrl(movie.imageUrl || null);
+    }
+  }, [movie, reset]);
+
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    if (acceptedFiles.length > 0) {
+      const file = acceptedFiles[0];
+      setUploadedFile(file);
+      setImageUrl(URL.createObjectURL(file));
+    }
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (imageUrl) {
+        URL.revokeObjectURL(imageUrl);
+      }
+    };
+  }, [imageUrl]);
+
+  const handleSaveMovie = useCallback(async () => {
+    const formData = new FormData();
+    const { name, description } = watch();
+
+    formData.append(CreateMovieFields.NAME, name);
+    formData.append(CreateMovieFields.DESCRIPTION, description);
+
+    if (!uploadedFile) {
+      toast.error(t('errors.uploadFile'))
+      return
+    }
+
+    formData.append(CreateMovieFields.IMAGE_URL, uploadedFile);
+    try {
+      if (id) {
+        await dispatch(updateMovie({ id, formData })).unwrap();
+        toast.success(t('success.updateCard'));
+      } else {
+        await dispatch(createMovie({ formData })).unwrap();
+        toast.success(t('success.createCard'));
+      }
+    } catch (error) {
+    } finally {
+      navigate(PATH_MAIN.ROOT);
+    }
+  }, [dispatch, id, watch, uploadedFile, navigate]);
+
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    accept: { 'image/*': [] },
+    maxFiles: 1,
+  });
+
+  return (
+    <Box
+      sx={{
+        padding: '120px',
+        minHeight: '90vh',
+        width: '100%',
+        [theme.breakpoints.down('sm')]: { padding: '80px 24px 24px' },
+      }}
+    >
+      <Typography variant="h2" color={theme.palette.common.white}>
+        {id ? t('Edit Movie') : t('Create movie')}
+      </Typography>
+
+      <Box
+        sx={{
+          paddingTop: '120px',
+          [theme.breakpoints.down('sm')]: { paddingTop: '80px' },
+        }}
+      >
+        <FormProvider
+          methods={methods}
+          onSubmit={handleSubmit(handleSaveMovie)}
+        >
+          <Stack
+            direction={{ xs: 'column', sm: 'row' }}
+            spacing={3}
+            sx={{
+              [theme.breakpoints.down('sm')]: {
+                flexDirection: 'column',
+                alignItems:"center"
+              },
+            }}
+          >
+
+            <Box
+              {...getRootProps()}
+              sx={{
+                border: '2px dashed gray',
+                padding: '20px',
+                textAlign: 'center',
+                cursor: 'pointer',
+                borderRadius: '4px',
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                maxWidth: '470px',
+                maxHeight: '504px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                overflow: 'hidden',
+                [theme.breakpoints.down('sm')]: {
+                  order: -1,
+                  maxWidth: '100%',
+                },
+              }}
+            >
+              <input {...getInputProps()} />
+              {uploadedFile || imageUrl ? (
+                <img
+                  src={
+                    imageUrl ||
+                    (uploadedFile ? URL.createObjectURL(uploadedFile) : '')
+                  }
+                  alt={t('uploadedImageAlt')}
+                  style={{ maxWidth: '100%', maxHeight: '100%' }}
+                />
+              ) : (
+                <Box
+                  sx={{
+                    height: '500px',
+                    minWidth:"473px",
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '20px',
+                    textAlign: 'center',
+                    justifyContent: 'center',
+                    flexDirection: 'column',
+                  }}
+                >
+                  <SVGIcon name="Upload" height={24} width={24} />
+                  <Typography
+                    variant="body2"
+                    sx={{ color: theme.palette.common.white }}
+                  >
+                    {t('inputs.upload')}
+                  </Typography>
+                </Box>
+              )}
+            </Box>
+
+
+            <Stack spacing={2} sx={{ flex: 1, width: "100%" }}>
+              <RHFOutlinedInput
+                name={CreateMovieFields.NAME}
+                placeholder={t('inputs.name')}
+                fullWidth
+              />
+              <RHFOutlinedInput
+                name={CreateMovieFields.DESCRIPTION}
+                placeholder={t('inputs.title')}
+
+              />
+
+              <Stack
+                direction="row"
+                spacing={2}
+                sx={{ justifyContent: 'flex-start',paddingTop:"48px",
+                  [theme.breakpoints.down('sm')]: {
+                    paddingTop:"24px",
+                    justifyContent: 'space-between'
+                  },
+                 }}
+              >
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleSaveMovie}
+                  disabled={isSubmitting || !isValid}
+                  sx={{ width: '180px' }}
+                >
+                  {t('Save')}
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  onClick={() => navigate('/')}
+                  sx={{
+                    width: '180px',
+                    border: `1px solid ${theme.palette.common.white}`,
+                    color: theme.palette.common.white,
+                    '&:hover': {
+                      border: `1px solid ${theme.palette.common.white}`,
+                    },
+                  }}
+                >
+                  {t('Cancel')}
+                </Button>
+              </Stack>
+            </Stack>
+          </Stack>
+        </FormProvider>
+      </Box>
+    </Box>
+  );
+};
+
+export default MoviePage;
