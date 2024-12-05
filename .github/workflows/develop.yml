@@ -17,7 +17,7 @@ jobs:
       - name: Create env file
         run: |
           touch ./.env
-          echo VITE_SERVER_URL=${{ secrets.PROD_VITE_SERVER_URL }} >> ./.env
+          echo VITE_SERVER_URL=${{ secrets.VITE_SERVER_URL }} >> ./.env
           cat ./.env
       - name: Build
         run: npm run build
@@ -27,8 +27,8 @@ jobs:
       - name: Deploy to S3
         uses: jakejarvis/s3-sync-action@master
         env:
-          AWS_S3_BUCKET: ${{ secrets.PROD_AWS_S3_BUCKET }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ secrets.PROD_AWS_REGION }}
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
           SOURCE_DIR: 'dist'
