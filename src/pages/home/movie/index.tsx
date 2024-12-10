@@ -10,12 +10,10 @@ import toast from 'react-hot-toast';
 
 import { FormProvider, RHFOutlinedInput, SVGIcon } from '@src/components';
 import { CreateMovieFields, PATH_MAIN } from '@src/constants';
-import { useAppDispatch } from '@src/store';
-import { updateMovie, createMovie } from '@src/store/actions/movie';
 import { useMovie } from '@src/hooks/useMovie';
 import { MovieSchema } from '@src/schemas/movieSchema';
-
-
+import { useAppDispatch } from '@src/store';
+import { updateMovie, createMovie } from '@src/store/actions/movie';
 
 export interface ICreateMovieValues {
   [CreateMovieFields.NAME]: string;
@@ -170,7 +168,10 @@ const MoviePage = () => {
               <input {...getInputProps()} />
               {uploadedFile || imageUrl ? (
                 <img
-                  src={imageUrl || (uploadedFile ? URL.createObjectURL(uploadedFile) : '')}
+                  src={
+                    imageUrl ||
+                    (uploadedFile ? URL.createObjectURL(uploadedFile) : '')
+                  }
                   alt={t('uploadedImageAlt')}
                   style={{ maxWidth: '100%', maxHeight: '100%' }}
                 />
