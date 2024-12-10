@@ -1,10 +1,10 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Stack } from '@mui/material';
 import { unwrapResult } from '@reduxjs/toolkit';
+import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 
 import { FormProvider, RHFOutlinedInput } from '@src/components';
 import { RHFOutlinedPasswordInput } from '@src/components/hook-form/RHFOutlinedPasswordInput';
@@ -31,10 +31,10 @@ const defaultValues: IRegisterFormValues = {
   [RegisterFields.REPEAT_PASSWORD]: '',
 };
 
-export const RegisterForm = () => {
+const RegisterForm = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const methods = useForm<IRegisterFormValues>({
     resolver: yupResolver(RegisterSchema()),
@@ -48,23 +48,19 @@ export const RegisterForm = () => {
   } = methods;
 
   const onSubmit = async (data: IRegisterFormValues) => {
-    try {
-      unwrapResult(
-        await dispatch(
-          signUp({
-            email: data[RegisterFields.EMAIL],
-            firstName: data[RegisterFields.FIRST_NAME],
-            lastName: data[RegisterFields.LAST_NAME],
-            password: data[RegisterFields.PASSWORD],
-            repeatPassword: data[RegisterFields.REPEAT_PASSWORD],
-          }),
-        ),
-      );
-      toast.success(t('success.welcome'));
-      navigate(PATH_MAIN.ROOT);
-    } catch (error: unknown) {
-      console.log(error);
-    }
+    unwrapResult(
+      await dispatch(
+        signUp({
+          email: data[RegisterFields.EMAIL],
+          firstName: data[RegisterFields.FIRST_NAME],
+          lastName: data[RegisterFields.LAST_NAME],
+          password: data[RegisterFields.PASSWORD],
+          repeatPassword: data[RegisterFields.REPEAT_PASSWORD],
+        }),
+      ),
+    );
+    toast.success(t('success.welcome'));
+    router.push(PATH_MAIN.ROOT);
   };
 
   return (
@@ -108,3 +104,5 @@ export const RegisterForm = () => {
     </FormProvider>
   );
 };
+
+export default RegisterForm;

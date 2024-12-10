@@ -1,23 +1,22 @@
 import {
   Box,
-
   Grid,
   CircularProgress,
   Typography,
   useTheme,
   Pagination,
 } from '@mui/material';
-import { useNavigate } from 'react-router';
+import { useRouter } from 'next/router';
 
 import { PATH_MAIN } from '@src/constants';
 
-import Header from './components/Header';
-import NoMovieContent from './components/NoMovieContent';
-import { useMovies } from './hooks/useMovies';
+import Header from '../../components/Header';
+import NoMovieContent from '../../components/NoMovieContent';
+import { useMovies } from '../../hooks/useMovies';
 
 const HomePage = () => {
   const theme = useTheme();
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const { movies, loading, error, metadata, handlePageChange } = useMovies();
 
@@ -31,7 +30,10 @@ const HomePage = () => {
   const isNoMovies = movies?.length === 0;
 
   const handleMovieClick = (id: string) => {
-    navigate(PATH_MAIN.MOVIE_ID.replace(':id', id));
+    router.push({
+      pathname: PATH_MAIN.MOVIE,
+      query: { id },
+    });
   };
 
   return (

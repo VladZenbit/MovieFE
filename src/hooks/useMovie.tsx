@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+
 import { useSelector, useDispatch } from 'react-redux';
 
 import { AppDispatch } from '@src/store';
@@ -14,7 +15,7 @@ export const useMovie = (id: string | null) => {
     if (id) {
       dispatch(getMovie({ id }));
     }
-  }, [dispatch]);
+  }, [dispatch, id]);
 
   return {
     movie,

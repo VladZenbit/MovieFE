@@ -1,10 +1,10 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Box, Button, Stack } from '@mui/material';
 import { unwrapResult } from '@reduxjs/toolkit';
+import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 
 import { FormProvider, RHFOutlinedInput } from '@src/components';
 import { RHFOutlinedPasswordInput } from '@src/components/hook-form/RHFOutlinedPasswordInput';
@@ -24,9 +24,9 @@ const defaultValues: ILoginFormValues = {
   [LoginFields.PASSWORD]: '',
 };
 
-export const LoginForm = () => {
+const LoginForm = () => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const router = useRouter();
   const dispatch = useAppDispatch();
 
   const methods = useForm<ILoginFormValues>({
@@ -43,9 +43,9 @@ export const LoginForm = () => {
   const onSubmit = async (data: ILoginFormValues) => {
     try {
       unwrapResult(await dispatch(signIn({ ...data })));
-      navigate(PATH_MAIN.ROOT);
       toast.success(t('success.welcome'));
-    } catch (error: unknown) {
+      router.push(PATH_MAIN.ROOT);
+    } catch (error) {
       console.log(error);
     }
   };
@@ -78,3 +78,5 @@ export const LoginForm = () => {
     </FormProvider>
   );
 };
+
+export default LoginForm;

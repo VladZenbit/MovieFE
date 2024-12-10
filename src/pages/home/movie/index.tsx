@@ -1,19 +1,21 @@
 import { useCallback, useEffect, useState } from 'react';
+
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Box, Stack, Typography, Button, useTheme } from '@mui/material';
 import { t } from 'i18next';
+import { useRouter } from 'next/router';
 import { useDropzone } from 'react-dropzone';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import { useNavigate, useParams } from 'react-router';
 
 import { FormProvider, RHFOutlinedInput, SVGIcon } from '@src/components';
 import { CreateMovieFields, PATH_MAIN } from '@src/constants';
 import { useAppDispatch } from '@src/store';
 import { updateMovie, createMovie } from '@src/store/actions/movie';
+import { useMovie } from '@src/hooks/useMovie';
+import { MovieSchema } from '@src/schemas/movieSchema';
 
-import { useMovie } from './hooks/useMovie';
-import { MovieSchema } from './schemas/movieSchema';
+
 
 export interface ICreateMovieValues {
   [CreateMovieFields.NAME]: string;
@@ -30,11 +32,12 @@ const defaultValues: ICreateMovieValues = {
 const MoviePage = () => {
   const theme = useTheme();
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
-  const { id } = useParams<{ id: string }>();
+  const router = useRouter();
+  const { id } = router.query;
 
   const methods = useForm<ICreateMovieValues>({
-    resolver: yupResolver(MovieSchema() as any),
+    // @ts-expect-error: Casting MovieSchema to 'unknown' to bypass typing issues
+    resolver: yupResolver(MovieSchema() as unknown),
     defaultValues,
     mode: 'onTouched',
   });
@@ -46,7 +49,7 @@ const MoviePage = () => {
     formState: { isSubmitting, isValid },
   } = methods;
 
-  const { movie } = useMovie(id || null);
+  const { movie } = useMovie(id ? (Array.isArray(id) ? id[0] : id) : null);
 
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -85,25 +88,24 @@ const MoviePage = () => {
     formData.append(CreateMovieFields.NAME, name);
     formData.append(CreateMovieFields.DESCRIPTION, description);
 
-    if (!uploadedFile) {
-      toast.error(t('errors.uploadFile'))
-      return
+    if (!uploadedFile && !id) {
+      toast.error(t('errors.uploadFile'));
+      return;
     }
 
-    formData.append(CreateMovieFields.IMAGE_URL, uploadedFile);
+    formData.append(CreateMovieFields.IMAGE_URL, uploadedFile as File);
     try {
       if (id) {
-        await dispatch(updateMovie({ id, formData })).unwrap();
+        await dispatch(updateMovie({ id: id as string, formData })).unwrap();
         toast.success(t('success.updateCard'));
       } else {
         await dispatch(createMovie({ formData })).unwrap();
         toast.success(t('success.createCard'));
       }
-    } catch (error) {
     } finally {
-      navigate(PATH_MAIN.ROOT);
+      router.push(PATH_MAIN.ROOT);
     }
-  }, [dispatch, id, watch, uploadedFile, navigate]);
+  }, [dispatch, id, watch, uploadedFile, router]);
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
@@ -140,11 +142,10 @@ const MoviePage = () => {
             sx={{
               [theme.breakpoints.down('sm')]: {
                 flexDirection: 'column',
-                alignItems:"center"
+                alignItems: 'center',
               },
             }}
           >
-
             <Box
               {...getRootProps()}
               sx={{
@@ -169,10 +170,7 @@ const MoviePage = () => {
               <input {...getInputProps()} />
               {uploadedFile || imageUrl ? (
                 <img
-                  src={
-                    imageUrl ||
-                    (uploadedFile ? URL.createObjectURL(uploadedFile) : '')
-                  }
+                  src={imageUrl || (uploadedFile ? URL.createObjectURL(uploadedFile) : '')}
                   alt={t('uploadedImageAlt')}
                   style={{ maxWidth: '100%', maxHeight: '100%' }}
                 />
@@ -180,7 +178,7 @@ const MoviePage = () => {
                 <Box
                   sx={{
                     height: '500px',
-                    minWidth:"473px",
+                    minWidth: '473px',
                     display: 'flex',
                     alignItems: 'center',
                     gap: '20px',
@@ -200,8 +198,7 @@ const MoviePage = () => {
               )}
             </Box>
 
-
-            <Stack spacing={2} sx={{ flex: 1, width: "100%" }}>
+            <Stack spacing={2} sx={{ flex: 1, width: '100%' }}>
               <RHFOutlinedInput
                 name={CreateMovieFields.NAME}
                 placeholder={t('inputs.name')}
@@ -210,18 +207,19 @@ const MoviePage = () => {
               <RHFOutlinedInput
                 name={CreateMovieFields.DESCRIPTION}
                 placeholder={t('inputs.title')}
-
               />
 
               <Stack
                 direction="row"
                 spacing={2}
-                sx={{ justifyContent: 'flex-start',paddingTop:"48px",
+                sx={{
+                  justifyContent: 'flex-start',
+                  paddingTop: '48px',
                   [theme.breakpoints.down('sm')]: {
-                    paddingTop:"24px",
-                    justifyContent: 'space-between'
+                    paddingTop: '24px',
+                    justifyContent: 'space-between',
                   },
-                 }}
+                }}
               >
                 <Button
                   variant="contained"
@@ -235,7 +233,7 @@ const MoviePage = () => {
                 <Button
                   variant="outlined"
                   color="secondary"
-                  onClick={() => navigate('/')}
+                  onClick={() => router.push(PATH_MAIN.ROOT)}
                   sx={{
                     width: '180px',
                     border: `1px solid ${theme.palette.common.white}`,

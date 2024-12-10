@@ -1,30 +1,31 @@
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { Tab, useTheme } from '@mui/material';
+import { useRouter } from 'next/router'; // Используем Next.js роутер
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router';
 
 import { AuthLayout, CenteredLayout } from '@src/components';
-import { PATH_AUTH } from '@src/constants';
 
-import { LoginForm, RegisterForm } from './components';
+import LoginForm from '../../components/login-form/LoginForm';
+import RegisterForm from '../../components/register-form/RegisterForm';
 
-interface AuthPageProps {
-  variant: '/login' | '/register';
-}
-
-export const AuthPage = ({ variant }: AuthPageProps) => {
+const AuthPage = () => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const router = useRouter();
   const theme = useTheme();
 
+  const currentTab = router.query.tab === 'register' ? '/register' : '/login';
+
   const onChangeTab = (_event: React.SyntheticEvent, value: string) => {
-    navigate(`${PATH_AUTH.ROOT}${value}`);
+    router.push({
+      pathname: router.pathname,
+      query: { tab: value.slice(1) },
+    });
   };
 
   return (
     <AuthLayout>
       <CenteredLayout>
-        <TabContext value={variant}>
+        <TabContext value={currentTab}>
           <TabList
             TabIndicatorProps={{ sx: { color: theme.palette.text.primary } }}
             onChange={onChangeTab}
@@ -59,3 +60,5 @@ export const AuthPage = ({ variant }: AuthPageProps) => {
     </AuthLayout>
   );
 };
+
+export default AuthPage;

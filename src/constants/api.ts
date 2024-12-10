@@ -1,2 +1,2 @@
-export const BASE_URL: string = import.meta.env.VITE_SERVER_URL;
-export const IPAPI_URL = 'https://ipapi.co/json/';
+export const BASE_URL: string =
+  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';

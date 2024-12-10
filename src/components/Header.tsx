@@ -1,24 +1,24 @@
 import { Box, Button, Typography, useTheme } from '@mui/material';
 import { t } from 'i18next';
-import { useNavigate } from 'react-router';
+import { useRouter } from 'next/router';
 
 import { SVGIcon } from '@src/components';
-import { PATH_MAIN } from '@src/constants';
+import { PATH_MAIN, ROOT_AUTH } from '@src/constants';
 import { useAppDispatch } from '@src/store';
 import { logout } from '@src/store/reducers/auth/actions';
 
 const Header = () => {
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
+  const router = useRouter();
   const theme = useTheme();
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate(PATH_MAIN.ROOT);
+    router.push(ROOT_AUTH);
   };
 
   const handleAdd = () => {
-    navigate(PATH_MAIN.MOVIE);
+    router.push(PATH_MAIN.MOVIE);
   };
 
   return (

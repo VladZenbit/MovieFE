@@ -1,9 +1,9 @@
 import { ReactElement, useEffect } from 'react';
 
-import { useLocation } from 'react-router';
+import { useRouter } from 'next/router';
 
 const ScrollTop = ({ children }: { children?: ReactElement | null }) => {
-  const { pathname } = useLocation();
+  const { pathname } = useRouter();
 
   useEffect(() => {
     window.scrollTo(0, 0);

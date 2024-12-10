@@ -1,4 +1,4 @@
-export * from './paths';
+export * from '../routes/paths';
 export * from './common';
 export * from './forms';
 export * from './validation';

@@ -42,7 +42,7 @@ export default function ThemeCustomization({
     [breakpointsTheme],
   );
 
-  // @ts-ignore
+  // @ts-expect-error: Ignoring incompatible types for componentsOverride
   theme.components = componentsOverride(theme);
 
   return (

@@ -1,24 +1,22 @@
+import { AppProps } from 'next/app';
 import { Toaster } from 'react-hot-toast';
 import { Provider } from 'react-redux';
-import { RouterProvider } from 'react-router-dom';
 import { PersistGate } from 'redux-persist/integration/react';
 
-import router from '@src/routes';
+import { TOAST_DURATION } from '@src/constants';
 import { persistor, store } from '@src/store';
 import ThemeCustomization from '@src/themes';
 import { injectStore } from '@src/utils/api';
-
-import './locales';
-import { TOAST_DURATION } from './constants';
+import '@src/locales';
 
 injectStore(store);
 
-const App = () => {
+const MyApp = ({ Component, pageProps }: AppProps) => {
   return (
     <Provider store={store}>
       <PersistGate persistor={persistor}>
         <ThemeCustomization>
-          <RouterProvider router={router} />
+          <Component {...pageProps} />
           <Toaster
             toastOptions={{
               duration: TOAST_DURATION,
@@ -30,4 +28,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default MyApp;

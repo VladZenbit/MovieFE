@@ -20,5 +20,5 @@ export const MovieSchema = () =>
         MAX_DESCRIPTION_LENGTH,
         i18next.t('errors.maxLengthChars', { value: MAX_DESCRIPTION_LENGTH }),
       ),
-    [CreateMovieFields.IMAGE_URL]: Yup.mixed<File>(),
+    [CreateMovieFields.IMAGE_URL]: Yup.mixed().required(),
   });

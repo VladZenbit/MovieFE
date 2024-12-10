@@ -11,7 +11,7 @@ export const PATH_AUTH = {
 };
 
 export const PATH_MAIN = {
-  ROOT: '/',
-  MOVIE: '/movie',
-  MOVIE_ID: '/movie/:id',
+  ROOT: '/home',
+  MOVIE: '/home/movie',
+  MOVIE_ID: '/home/movie/:id',
 };

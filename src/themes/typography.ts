@@ -10,6 +10,7 @@ export function pxToRem(value: number) {
   return `${value / 16}rem`;
 }
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
 const Typography = (_theme: Theme): TypographyVariantsOptions => {
   return {
     htmlFontSize: BASE_FONT_SIZE,

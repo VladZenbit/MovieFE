@@ -20,8 +20,3 @@ export interface GetMoviesResponseBodyDto {
   metadata: Metadata;
   movies: Movies[];
 }
-
-export interface GetMoviesResponseBodyDto {
-  metadata: Metadata;
-  movies: Movies[];
-}

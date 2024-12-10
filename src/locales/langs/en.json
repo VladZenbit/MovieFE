@@ -50,7 +50,8 @@
     "signedUp": "Signed up successfully!",
     "loggedIn": "Logged in successfully!",
     "pleaseLogIn": "Please log in to your account to proceed to checkout!",
-    "createCard": "You created new Movie"
+    "createCard": "You created new Movie",
+    "updateCard": "Card update success"
   },
   "pages": {
     "home": "Home"

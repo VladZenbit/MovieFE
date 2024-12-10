@@ -1,21 +1,24 @@
-import { Box, Button, Stack, Typography } from '@mui/material';
+import { Box, Button, Stack, Typography, useTheme } from '@mui/material';
+import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 
 import { MainLayout } from '@src/components';
 import { PATH_MAIN } from '@src/constants/index';
 
 const Error404 = () => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const router = useRouter();
   const hasPreviousPage = window.history.length > 2;
+  const theme = useTheme();
+
   const handleErrorButtonClick = () => {
     if (hasPreviousPage) {
-      navigate(-1);
+      router.back();
     } else {
-      navigate(PATH_MAIN.ROOT);
+      router.push(PATH_MAIN.MOVIE);
     }
   };
+
   return (
     <MainLayout>
       <Stack
@@ -32,14 +35,18 @@ const Error404 = () => {
         }}
       >
         <Box>
-          <Typography variant="h1" color="primary">
+          <Typography variant="h1" color={theme.palette.common.white}>
             {t('error404.header')}
           </Typography>
-          <Typography variant="h4">{t('error404.subheader')}</Typography>
+          <Typography variant="h4" color={theme.palette.common.white}>
+            {t('error404.subheader')}
+          </Typography>
         </Box>
         <Box>
-          <Typography variant="body1">{t('error404.description')}</Typography>
-          <Typography variant="body2">
+          <Typography variant="body1" color={theme.palette.common.white}>
+            {t('error404.description')}
+          </Typography>
+          <Typography variant="body2" color={theme.palette.common.white}>
             {t(
               hasPreviousPage
                 ? 'error404.pleaseGoBack'
