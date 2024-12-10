@@ -1,7 +1,5 @@
 import { Box, Container } from '@mui/material';
 
-import greenWave from '@src/assets/greenWave.png';
-import whiteWave from '@src/assets/whiteWave.png';
 import ScrollTop from '@src/components/ScrollTop';
 
 export interface AuthLayoutProps {
@@ -14,9 +12,11 @@ export const AuthLayout = (props: AuthLayoutProps) => {
     <ScrollTop>
       <Box
         sx={{
-          minHeight: '100vh',
+          height: '100vh',
           width: '100%',
-          backgroundImage: `url(${whiteWave}), url(${greenWave})`,
+          display: 'flex',
+          flexDirection: 'column',
+          backgroundImage: `url('/assets/whiteWave.png'), url('/assets/greenWave.png')`,
           backgroundSize: '100% 10%, 100% 10%',
           backgroundPosition: 'bottom, bottom',
           backgroundRepeat: 'no-repeat, no-repeat',
@@ -24,10 +24,10 @@ export const AuthLayout = (props: AuthLayoutProps) => {
       >
         <Container
           sx={{
-            height: '100%',
+            flex: 1,
+            display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            display: 'flex',
           }}
         >
           {children}

@@ -9,6 +9,8 @@ import ThemeCustomization from '@src/themes';
 import { injectStore } from '@src/utils/api';
 import '@src/locales';
 
+import './styles.css';
+
 injectStore(store);
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
