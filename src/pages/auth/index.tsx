@@ -1,6 +1,6 @@
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { Tab, useTheme } from '@mui/material';
-import { useRouter } from 'next/router'; // Используем Next.js роутер
+import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 
 import { AuthLayout, CenteredLayout } from '@src/components';
