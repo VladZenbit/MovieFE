@@ -7,6 +7,7 @@ import {
   Pagination,
 } from '@mui/material';
 import { useRouter } from 'next/router';
+import { useCallback, useMemo } from 'react';
 
 import { PATH_MAIN } from '@src/constants';
 
@@ -20,21 +21,24 @@ const HomePage = () => {
 
   const { movies, loading, error, metadata, handlePageChange } = useMovies();
 
-  const handlePaginationChange = (
-    _event: React.ChangeEvent<unknown>,
-    page: number,
-  ) => {
-    handlePageChange(page);
-  };
+  const handlePaginationChange = useCallback(
+    (_event: React.ChangeEvent<unknown>, page: number) => {
+      handlePageChange(page);
+    },
+    [handlePageChange]
+  );
 
-  const isNoMovies = movies?.length === 0;
+  const handleMovieClick = useCallback(
+    (id: string) => {
+      router.push({
+        pathname: PATH_MAIN.MOVIE,
+        query: { id },
+      });
+    },
+    [router]
+  );
 
-  const handleMovieClick = (id: string) => {
-    router.push({
-      pathname: PATH_MAIN.MOVIE,
-      query: { id },
-    });
-  };
+  const isNoMovies = useMemo(() => movies?.length === 0, [movies]);
 
   return (
     <Box

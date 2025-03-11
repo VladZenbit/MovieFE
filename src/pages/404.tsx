@@ -1,6 +1,7 @@
 import { Box, Button, Stack, Typography, useTheme } from '@mui/material';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
+import { useCallback } from 'react';
 
 import { MainLayout } from '@src/components';
 import { PATH_MAIN } from '@src/constants/index';
@@ -11,13 +12,13 @@ const Error404 = () => {
   const hasPreviousPage = window.history.length > 2;
   const theme = useTheme();
 
-  const handleErrorButtonClick = () => {
+  const handleErrorButtonClick = useCallback(() => {
     if (hasPreviousPage) {
       router.back();
     } else {
       router.push(PATH_MAIN.MOVIE);
     }
-  };
+  },[])
 
   return (
     <MainLayout>

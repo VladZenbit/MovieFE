@@ -14,6 +14,7 @@ import { useMovie } from '@src/hooks/useMovie';
 import { MovieSchema } from '@src/schemas/movieSchema';
 import { useAppDispatch } from '@src/store';
 import { updateMovie, createMovie } from '@src/store/actions/movie';
+import palette from '@src/themes/palette';
 
 export interface ICreateMovieValues {
   [CreateMovieFields.NAME]: string;
@@ -32,6 +33,8 @@ const MoviePage = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { id } = router.query;
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
 
   const methods = useForm<ICreateMovieValues>({
     // @ts-expect-error: Casting MovieSchema to 'unknown' to bypass typing issues
@@ -48,9 +51,6 @@ const MoviePage = () => {
   } = methods;
 
   const { movie } = useMovie(id ? (Array.isArray(id) ? id[0] : id) : null);
-
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (movie) {
@@ -121,7 +121,7 @@ const MoviePage = () => {
       }}
     >
       <Typography variant="h2" color={theme.palette.common.white}>
-        {id ? t('Edit Movie') : t('Create movie')}
+        {id ? t('main.editMovie') : t('main.createMovie')}
       </Typography>
 
       <Box
@@ -147,12 +147,12 @@ const MoviePage = () => {
             <Box
               {...getRootProps()}
               sx={{
-                border: '2px dashed gray',
+                border: `2px dashed ${palette.custom.gray}`,
                 padding: '20px',
                 textAlign: 'center',
                 cursor: 'pointer',
                 borderRadius: '4px',
-                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                backgroundColor: palette.custom.backgroundColor,
                 maxWidth: '470px',
                 maxHeight: '504px',
                 display: 'flex',
@@ -229,7 +229,7 @@ const MoviePage = () => {
                   disabled={isSubmitting || !isValid}
                   sx={{ width: '180px' }}
                 >
-                  {t('Save')}
+                  {t('common.save')}
                 </Button>
                 <Button
                   variant="outlined"
@@ -244,7 +244,7 @@ const MoviePage = () => {
                     },
                   }}
                 >
-                  {t('Cancel')}
+                  {t('common.cancel')}
                 </Button>
               </Stack>
             </Stack>

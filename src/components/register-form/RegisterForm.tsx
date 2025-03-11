@@ -5,6 +5,8 @@ import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
+import { useCallback } from 'react';
+
 
 import { FormProvider, RHFOutlinedInput } from '@src/components';
 import { RHFOutlinedPasswordInput } from '@src/components/hook-form/RHFOutlinedPasswordInput';
@@ -47,21 +49,25 @@ const RegisterForm = () => {
     formState: { isSubmitting, isValid },
   } = methods;
 
-  const onSubmit = async (data: IRegisterFormValues) => {
-    unwrapResult(
-      await dispatch(
-        signUp({
-          email: data[RegisterFields.EMAIL],
-          firstName: data[RegisterFields.FIRST_NAME],
-          lastName: data[RegisterFields.LAST_NAME],
-          password: data[RegisterFields.PASSWORD],
-          repeatPassword: data[RegisterFields.REPEAT_PASSWORD],
-        }),
-      ),
-    );
-    toast.success(t('success.welcome'));
-    router.push(PATH_MAIN.ROOT);
-  };
+  const onSubmit = useCallback(
+    async (data: IRegisterFormValues) => {
+      unwrapResult(
+        await dispatch(
+          signUp({
+            email: data[RegisterFields.EMAIL],
+            firstName: data[RegisterFields.FIRST_NAME],
+            lastName: data[RegisterFields.LAST_NAME],
+            password: data[RegisterFields.PASSWORD],
+            repeatPassword: data[RegisterFields.REPEAT_PASSWORD],
+          })
+        )
+      );
+      toast.success(t('success.welcome'));
+      router.push(PATH_MAIN.ROOT);
+    },
+    [dispatch, router, t]
+  );
+
 
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>

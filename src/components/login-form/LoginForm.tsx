@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
+import { useCallback } from 'react';
 
 import { FormProvider, RHFOutlinedInput } from '@src/components';
 import { RHFOutlinedPasswordInput } from '@src/components/hook-form/RHFOutlinedPasswordInput';
@@ -40,15 +41,16 @@ const LoginForm = () => {
     formState: { isSubmitting, isValid },
   } = methods;
 
-  const onSubmit = async (data: ILoginFormValues) => {
-    try {
-      unwrapResult(await dispatch(signIn({ ...data })));
-      toast.success(t('success.welcome'));
-      router.push(PATH_MAIN.ROOT);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const onSubmit = useCallback(
+    (data: ILoginFormValues) =>
+      dispatch(signIn({ ...data }))
+        .then(unwrapResult)
+        .then(() => {
+          toast.success(t('success.welcome'));
+          router.push(PATH_MAIN.ROOT);
+        }),
+    [dispatch, router, t]
+  );
 
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>

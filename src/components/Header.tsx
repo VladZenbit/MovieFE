@@ -1,5 +1,6 @@
 import { Box, Button, Typography, useTheme } from '@mui/material';
 import { t } from 'i18next';
+import { useCallback } from 'react';
 import { useRouter } from 'next/router';
 
 import { SVGIcon } from '@src/components';
@@ -12,14 +13,15 @@ const Header = () => {
   const router = useRouter();
   const theme = useTheme();
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     dispatch(logout());
     router.push(ROOT_AUTH);
-  };
+  },[])
 
-  const handleAdd = () => {
+  const handleAdd = useCallback(() => {
     router.push(PATH_MAIN.MOVIE);
-  };
+  }, [])
+
 
   return (
     <Box

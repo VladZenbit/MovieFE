@@ -9,6 +9,8 @@ export const COLORS = {
   white: '#ffffff',
   disabled: '#2a704d',
   black: '#000000',
+  backgroundColor:"rgba(255, 255, 255, 0.1)",
+  gray: "808080"
 };
 
 const palette = createPalette({
@@ -30,6 +32,10 @@ const palette = createPalette({
   background: {
     paper: COLORS.white,
     default: COLORS.background,
+  },
+  custom: {
+    gray: COLORS.gray,
+    backgroundColor: COLORS.backgroundColor,
   },
 });
 

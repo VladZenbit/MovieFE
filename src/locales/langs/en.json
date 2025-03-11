@@ -2,10 +2,11 @@
   "common": {
     "loading": "Loading...",
     "loadMore": "Load More",
-    "submit": "Submot",
+    "submit": "Submit",
     "cancel": "Cancel",
     "addNewMovie": "Add a new Movie",
-    "noMovie": "Your movie list is empty"
+    "noMovie": "Your movie list is empty",
+    "save": "Save"
   },
   "errors": {
     "requiredEmail": "Email can not be empty",
@@ -68,5 +69,9 @@
     "goBack": "Go back",
     "pleaseGoToHomePage": "Please, go to the home page.",
     "homePage": "Home Page"
+  },
+  "main": {
+    "createMovie": "Create Movie",
+    "editMovie": "Edit Movie"
   }
 }
